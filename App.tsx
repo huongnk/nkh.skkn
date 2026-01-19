@@ -32,15 +32,12 @@ const App: React.FC = () => {
 
   // Start the Generation Process
   const startGeneration = async () => {
-    if (!process.env.API_KEY) {
-      setState(prev => ({ ...prev, error: "API Key not found in environment variables." }));
-      return;
-    }
-
+    // Note: Assuming process.env.API_KEY is pre-configured and valid as per guidelines.
     try {
       setState(prev => ({ ...prev, step: GenerationStep.OUTLINE, isStreaming: true, error: null }));
       
-      initializeGeminiChat(process.env.API_KEY);
+      // Fix: initializeGeminiChat now uses process.env.API_KEY internally for compliance.
+      initializeGeminiChat();
 
       const initMessage = `Chào chuyên gia. Tôi cần viết SKKN.
       Thông tin của tôi:
