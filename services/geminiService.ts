@@ -13,7 +13,7 @@ let chatSession: Chat | null = null;
 // Fix: Use process.env.API_KEY directly inside the initialization instead of passing as argument.
 export const initializeGeminiChat = () => {
   // Always use a named parameter for the API key initialization and access process.env.API_KEY directly.
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
   
   chatSession = ai.chats.create({
     model: 'gemini-3-flash-preview',
