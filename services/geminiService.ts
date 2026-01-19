@@ -7,23 +7,21 @@ let chatSession: Chat | null = null;
 
 /**
  * Initializes the Gemini Chat session.
- * Sử dụng 'gemini-3-flash-preview' - Model tối ưu cho các tác vụ văn bản thông thường
- * và hoàn toàn tương thích với gói API miễn phí (Free Tier).
+ * Sử dụng 'gemini-1.5-flash' - Model có tốc độ phản hồi cực nhanh và hạn mức (quota) 
+ * miễn phí cao nhất hiện nay, phù hợp cho việc viết lách số lượng lớn.
  */
-// Fix: Use process.env.API_KEY directly inside the initialization instead of passing as argument.
 export const initializeGeminiChat = () => {
   // Always use a named parameter for the API key initialization and access process.env.API_KEY directly.
-  const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   
   chatSession = ai.chats.create({
-    model: 'gemini-3-flash-preview',
+    model: 'gemini-1.5-flash',
     config: {
       systemInstruction: SYSTEM_INSTRUCTION,
       temperature: 0.7,
       topK: 64,
       topP: 0.95,
-      // Gemini 3 Flash hỗ trợ thinkingBudget tối đa là 24576
-      thinkingConfig: { thinkingBudget: 24576 } 
+      // Lưu ý: thinkingConfig chỉ hỗ trợ dòng 2.5 và 3, nên đã được gỡ bỏ cho model 1.5 Flash.
     },
   });
   return chatSession;
@@ -49,7 +47,7 @@ export const sendMessageStream = async (message: string, onChunk: (text: string)
     console.error("Gemini API Error:", error);
     // Xử lý lỗi phổ biến khi dùng key miễn phí (Rate limit)
     if (error.message?.includes('429')) {
-        throw new Error("Tốc độ yêu cầu quá nhanh. Vui lòng đợi giây lát vì bạn đang dùng API miễn phí.");
+        throw new Error("Tốc độ yêu cầu quá nhanh hoặc đã hết hạn mức miễn phí trong phút này. Vui lòng đợi 1 chút.");
     }
     throw error;
   }
