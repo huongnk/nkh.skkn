@@ -7,21 +7,22 @@ let chatSession: Chat | null = null;
 
 /**
  * Initializes the Gemini Chat session.
- * Sử dụng 'gemini-1.5-flash' - Model có tốc độ phản hồi cực nhanh và hạn mức (quota) 
- * miễn phí cao nhất hiện nay, phù hợp cho việc viết lách số lượng lớn.
+ * Sử dụng 'gemini-3-flash-preview' thay cho 'gemini-1.5-flash' để tránh lỗi 404.
+ * Đây là model Flash mạnh nhất hiện nay, cực nhanh và có hạn mức Free Tier rất lớn.
  */
 export const initializeGeminiChat = () => {
   // Always use a named parameter for the API key initialization and access process.env.API_KEY directly.
-  const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   
   chatSession = ai.chats.create({
-    model: 'gemini-1.5-flash',
+    model: 'gemini-3-flash-preview',
     config: {
       systemInstruction: SYSTEM_INSTRUCTION,
       temperature: 0.7,
       topK: 64,
       topP: 0.95,
-      // Lưu ý: thinkingConfig chỉ hỗ trợ dòng 2.5 và 3, nên đã được gỡ bỏ cho model 1.5 Flash.
+      // Model Gemini 3 hỗ trợ tính năng suy nghĩ để viết lách sâu sắc hơn
+      thinkingConfig: { thinkingBudget: 0 } // Đặt bằng 0 để tối ưu tốc độ phản hồi (Flash speed)
     },
   });
   return chatSession;
@@ -47,7 +48,10 @@ export const sendMessageStream = async (message: string, onChunk: (text: string)
     console.error("Gemini API Error:", error);
     // Xử lý lỗi phổ biến khi dùng key miễn phí (Rate limit)
     if (error.message?.includes('429')) {
-        throw new Error("Tốc độ yêu cầu quá nhanh hoặc đã hết hạn mức miễn phí trong phút này. Vui lòng đợi 1 chút.");
+        throw new Error("Tốc độ yêu cầu quá nhanh. Bạn vui lòng chờ vài giây rồi nhấn 'Viết tiếp' nhé (Hạn mức miễn phí đang được áp dụng).");
+    }
+    if (error.message?.includes('404')) {
+        throw new Error("Lỗi cấu hình Model. Vui lòng liên hệ kỹ thuật để cập nhật phiên bản Model mới nhất.");
     }
     throw error;
   }
