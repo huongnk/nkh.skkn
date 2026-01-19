@@ -32,7 +32,7 @@ const App: React.FC = () => {
 
   // Start the Generation Process
   const startGeneration = async () => {
-    if (!process.env.GEMINI_API_KEY) {
+    if (!process.env.API_KEY) {
       setState(prev => ({ ...prev, error: "API Key not found in environment variables." }));
       return;
     }
@@ -40,7 +40,7 @@ const App: React.FC = () => {
     try {
       setState(prev => ({ ...prev, step: GenerationStep.OUTLINE, isStreaming: true, error: null }));
       
-      initializeGeminiChat(process.env.GEMINI_API_KEY);
+      initializeGeminiChat(process.env.API_KEY);
 
       const initMessage = `Chào chuyên gia. Tôi cần viết SKKN.
       Thông tin của tôi:
