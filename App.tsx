@@ -32,7 +32,7 @@ const App: React.FC = () => {
 
   // Start the Generation Process
   const startGeneration = async () => {
-    if (!process.env.API_KEY) {
+    if (!process.env.GEMINI_API_KEY) {
       setState(prev => ({ ...prev, error: "API Key not found in environment variables." }));
       return;
     }
