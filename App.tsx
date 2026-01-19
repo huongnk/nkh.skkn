@@ -40,7 +40,7 @@ const App: React.FC = () => {
     try {
       setState(prev => ({ ...prev, step: GenerationStep.OUTLINE, isStreaming: true, error: null }));
       
-      initializeGeminiChat(process.env.API_KEY);
+      initializeGeminiChat(process.env.GEMINI_API_KEY);
 
       const initMessage = `Chào chuyên gia. Tôi cần viết SKKN.
       Thông tin của tôi:
